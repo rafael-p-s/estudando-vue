@@ -5,31 +5,36 @@
         <NuxtLink :to="{ name: 'produtos-produto-b' }">Produto B</NuxtLink>
         <br>
         <br>
-        <pre>
-                    {{ $fetchState }}
-                </pre>
-        <div v-if="$fetchState.pending">
-            Carregando ...
-        </div>
-        <div v-else>
-            <div v-for="service in services" :key="service.id" class="border-b border-gray-400 py-4">
-                {{ service.usernamee }}
-            </div>
-        </div>
+
     </div>
 </template>
-<script>
 
+<!-- <script >
 export default {
     data() {
         return {
             services: []
-        };
+        }
     },
-
-    async fetch() {
-        this.services = await this.$axios.$get('https://jsonplaceholder.typicode.com/users?_limit=2')
-    },
-
+    
 }
+</script> -->
+<script >
+const { resolve } = require('path');
+
+async function getPosts() {
+    try {
+        console.log('antes da conexão.');
+        // Isso é uma PROMISE
+        var response = await fetch('https://jsonplaceholder.typicode.com/users?_limited=3')
+        //Quando ele finalizar de pegar a PROMISE, irá capturar irá vir para baixo e pegar o JSON.
+        var posts = await response.json();
+        console.log(posts);
+        console.log('depois da conexão.');
+
+    } catch (e) {
+        console.log(e)
+    }
+}
+getPosts();
 </script>
