@@ -1,0 +1,284 @@
+Comando para criar:
+npx create-nuxt-app <nome>
+Pode ser usado tb: npx nuxi init <nome>
+
+Será pedido uma sequencia de configurações, que irão ditar as configurações futuras do projeto.
+
+Para fazer a execução do projeto:
+npm run dev
+
+
+VIU ROUTER:
+Fica na pasta .nuxt/router.js, aqui dentro qualquer arquivo criado na pasta "pages" irá mostrar aqui:
+ routes: [{
+    path: "/a-empresa",
+    component: _fa2bb21c,
+    name: "a-empresa"
+  }
+Caso o arquivo contido em "pages" sofra alteração no nome, esse arquivo se atualiza. PORÉM, é necessário ir em
+todos os arquivos que ele é utilizado e altarar o nome dos arquivos.
+També pode ocorrer de dentro de "pages" se criar uma pasta nova, exemplo: pasta criada chamada "bolo".
+O arquivo que antes era chamado de "bolo.vue", pode ser movido para dentro da pasta "bolo" e o arquivo,agora,
+pode receber o nome de "index.vue".PORÉM no arquivo .nuxt>router.js, o nome irá ser alterado para o nome da 
+PASTA.
+
+
+Configuração de outros frameworks:
+nuxt.config.js
+
+SEO:
+são as configurações do servidor(back-end)
+NuxtLink, serve para fazer essa ligação.
+
+
+Utilizando ROTAS, que no caso do NUXT já são "configuradas automáticamente", sendo necessário somente:
+<NuxtLink to="/<nomeDoArquivo>">Next PG</NuxtLink>
+Caso queria voltar para tela inicial:
+<NuxtLinl to="/">Home</NuxtLink>
+Para se fazer de uma maneira orientada:
+<NuxtLink :to="{name: '<nomeDoarquivo>'}>Texto texto</NuxtLink>
+
+CSS:
+quando é feito a instalação do NUXT é possível escolher qual será a framework para ajudar na configuração do css
+No momento foi escolhido o TAILWIND, porém é possível usar o CSS puro:
+<script>
+// Caution: Dynamic imports are not server-side compatible
+import('~/assets/css/teste.css')
+</script>
+Sendo necessário colocar dessa maneira, fazendo um script e configurando via ID na html.(até o momento)
+
+
+Toda pasta criada em PAGES, faz parte do LOCALHOST/<pasta>/<arquivo>
+
+*** PASSAGEM DE PARAMETROS USANDO VUE.JS ***
+Criar um arquivo com "_" no começo, _id.vue, depois dentro desse aquivo:
+<template>
+	<div>
+		<pre>
+			{{ $route.params}}
+		</pre>
+	</div>
+</template>
+usando: LOCALHOST/<pasta>/1/<algo> << irá passando os parametros para o arquivo.
+Na tela irá mostrar:
+{
+	1,
+	algo
+}
+
+SLUG:
+O SLUG serve para quando o usuário clicar em algo pré-determinado e, caso tenha configuraod no banco, buscar
+informações e exibir em tela, utilizando o SLUG para pegar a palavra clicada.
+O arquivo do SLUG deve ser criado dentro da pasta que irá pegar as informações que vão ser clicadas, sendo o
+nome do arquivo "_slug.vue", contendo:
+<template>
+    <div>
+        Slug: {{ $route.params.slug }}
+    </div>
+</template>
+Já nos outros arquivos:
+<NuxtLink to="/servicos/desenvolvimento-de-sites"><textoAserChamado</NuxtLink>
+
+NUXTCHILD:
+Quando se tem 2 arquivos com o mesmo nome, ou 1 pasta e 1 arquivo, exemplo:
+servicos<pasta> e servicos.vue<arquivo> que se encontra fora da pasta, o NUXT entende que o arquivo fora
+da pasta é o principal e o arquivo dentro da pasta é o arquivo filho(CHILD).
+Com isso é possível fazer alterações como:
+Passar as informações para o arquivo fora da pasta e acrescentar em seu corpo:
+<NuxtChild/>
+Enquanto no arquivo dentro da pasta, index.vue, irá ficar:
+<template>
+    <div>
+        <p>Teste de texto para NuxtChild</p>
+    </div>
+</template>
+Quando for se olhar o arquivo no Navegador, no lugar onde que está <NuxtChild/>, irá mostrar as informações
+contidas no arquivo index.vue.
+O SLUG também irá sofrer alterações, não mais abrindo uma nova pg com as informações clicadas. Agora irá exibir
+no lugar do <NuxtChild/>.
+
+
+NUXT:
+Serve para repetir de maneira "automática" o HTMl do código.
+Para que isso seja possível, criar a pasta LAYOUTS, dentro criar o default.vue dentro:
+Como exemplo vai ser usado o código da pasta "a-empresa", dentro da layouts>default.vue:
+<template>
+	<div>
+        <div class="bg-gray-100">
+            <div class="container mx-auto flex itens-center space-x-4 h-10 mb-10">
+                <NuxtLink :to="{ name: 'a-empresa' }">A empresa</NuxtLink>
+                <NuxtLink :to="{ name: 'servicos' }">Serviços</NuxtLink>
+                <NuxtLink :to="{ name: 'produtos' }">Produtos</NuxtLink>
+            </div>
+        </div>
+        <div class="container mx-auto">
+            <Nuxt/>
+        </div>
+    </div>
+<template>
+Onde está marcado "<Nuxt/>", essa parte vai ficar na pasta "a-empresa>index.vue":
+<template>
+    <div class="container mx-auto">
+        <h1 class="text-lg font-bold">A empresa</h1>
+        <p> Lorem ipsum dolor site amet</p>
+    </div>
+</template>
+Caso queira remover o uso do <Nuxt/>, criar o arquivo "auth.vue" dentro de LAYOUTS, colocar dnetr do arquivo em <script> digitar:
+<script>
+     {
+	name:'',
+	layout:'auth', << aqui estou fazendo a "conexão" com o arquivo que vou usar nesse caso.
+	data(){
+	return{
+	};
+      },
+      methods:{},
+     }	
+</script>
+
+MIDDLEWARE: é verificador do NUXT., que vai server para verificar se o usuário tem liberação para aquela página.
+Fazendo uma função para fazer essa verificação.
+No VUE ele é o PER-ROUTE GUARD.
+O comando é, fica conhecido como "anônimo", pois está direto no arquivo.:
+<script>
+	export default{
+			middleware(){ console.log('middleware empresa.');}
+		      }
+</script>
+Caso seja colocado naquele arquivo dentro da pasta LAYOUTS>default.vue, ele vai para todas as páginas.
+<script>
+	export default{
+			middleware(){ console.log('Middleware do default.');}
+		      }
+</script>
+>*LEMBRANDO que irá mostrar no CONSOLE essa mensagem*<
+Na aula diz para criar uma pasta chamada "middleware">auth.js, com os comandos:
+export default()=>{
+	console.log('auth middleware')
+}
+Ir até um arquivo e colocar:
+<scritp>
+	export default{
+		      	middleware:'auth'
+                      }
+</script>
+Essa linha de texto/\ é do rapaz do vídeo, nom eu ficou:
+<script>
+export default{
+    middleware:['auth']
+}
+</script>
+**ROUTER MIDDLEWARE**: ele fica configurado no nuxt.config.js, na parte >router<, sendo com isso irá configurado
+para todas as rotas:
+router: {
+    middleware: 'auth',
+  }
+Se colocar:
+export default(context)=>{
+	console.log(context
+	console.log('auth middleware')
+}
+Esse >context< no console irá mostrar várias propriedades.
+
+**(BUSCA DE DADOS)** se tem 3 propriedades para isso: 
+data(){return};
+e
+asyncData(){} << irá rodar tanto no cliente como no servidor, para fazer a troca de rotas. Ele é executado antes
+dos componentes, com isso não se tem acesso ao >this<:
+asyncData(){
+console.log(this)
+}
+Com isso é necessário usar >return<:
+asyncData(){
+	return{
+		producst:[
+				{name:'product-a'},
+				{name:'product-b'},
+			 ],
+	      };
+	   },
+No caso será usado com AJAX:
+Não vai de maneira nenhuma. Passei para
+
+FETCH: é uma propriedade, ele entra em ação depois que o componente é criado. Tendo acesso ao >this<.
+Porém não tenho acesso ao componente antes de ele ser carregado.
+<script>
+
+export default {
+    data() { return {}; },
+
+    fetch(){
+        console.log(this)
+    }
+}
+</script>
+Para verificar se realmente está funcionando, é possível passar um código:
+<script>
+export default {
+    data() {
+        return {
+            services: []
+        };
+    },
+    fetch() {
+        new Promise((resolve) => {
+            setTimeOut(() => {
+                resolve()
+            }, 3000) // 3000 é o timeout
+        })
+        console.log(this)
+    }
+}
+</script>
+Na parte de cima, no corpo do arquivo que vai ser mostrado no navegador:
+<pre>
+     {{ $fetchState }}
+</pre>
+Que irá retornar no navegador:
+{
+  "pending": false,
+  "error": null,
+  "timestamp": 1699306988601
+},
+Lembrando que ele nao bloqueia rota, só se for a primeira pg a carregar.
+
+
+---*ASYNC/AWAIT*---
+Async: transforma em assincorna.
+Await: ele pausa uma linha de execução, para ser executada depois.
+<script >
+async function slug(str) {
+    console.log('antes do timeout')
+    var result = await new Promise(resolve => {
+        setTimeout(() => {
+            resolve(str.toLowerCase().replace(/ /g, '-'))
+        }, 5000)
+    })
+    console.log('depois do timeout')
+    return result
+}
+slug("Meu Blog Post").then((response) => {
+    console.log('Função FINAL executada', response)
+});
+</script>
+Esse *>replace<*, serve para fazer alterações em strings no JAVASCRITP, exemplo:
+emailteste@hotmail.com
+name.replace('@hotmail.com','') << irá remover o '@hotmail.com' da string.
+Uma maneira, que caso dê algum problema seja mostrado o problema, caso dê certo mostra  certo:
+<script >
+async function getPosts() {
+    try {
+        console.log('antes da conexão.');
+        // Isso é uma PROMISE
+        var response = await fetch('https://jsonplaceholder.typicode.com/users?_limited=3')
+        //Quando ele finalizar de pegar a PROMISE, irá capturar irá vir para baixo e pegar o JSON.
+        var posts = await response.json();
+        console.log(posts);
+        console.log('depois da conexão.');
+
+    } catch (e) {
+        console.log(e)
+    }
+}
+getPosts();
+</script>
